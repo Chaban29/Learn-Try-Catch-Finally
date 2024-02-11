@@ -654,3 +654,365 @@ function func() {
 }
 
 alert(func());
+
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'Validation Error';
+  }
+}
+
+function test() {
+  throw new ValidationError('Oops!');
+}
+
+try {
+  test();
+} catch (err) {
+  console.log(err.name);
+  console.log(err.message);
+}
+
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
+function readUser(json) {
+  let user = JSON.parse(json);
+
+  if (!user.age) {
+    throw new ValidationError('No field: age');
+  }
+  if (!user.name) {
+    throw new ValidationError('No field: name');
+  }
+
+  return user;
+}
+
+try {
+  let user = readUser('{ "age": 25 }');
+} catch (err) {
+  if (err instanceof ValidationError) {
+    alert('Invalid data: ' + err.message);
+  } else if (err instanceof SyntaxError) {
+    alert('JSON Syntax Error: ' + err.message);
+  } else {
+    throw err;
+  }
+}
+
+
+
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'Validation Error';
+  }
+}
+
+class PropertyRequiredError extends ValidationError {
+  constructor(property) {
+    super('No property ' + property);
+    this.name = 'PropertyRequiredError';
+    this.property = property;
+  }
+}
+
+const readUser = (json) => {
+  let user = JSON.parse(json);
+
+  if (!user.name) {
+    throw new PropertyRequiredError('No filed: name');
+  }
+  if (!user.age) {
+    throw new PropertyRequiredError('No field: age');
+  }
+  return user;
+};
+
+try {
+  let user = readUser('{"name": "Roman"}');
+} catch (err) {
+  if (err instanceof ValidationError) {
+    alert('Invalid data: ' + err.message);
+    console.log(err.name);
+    console.log(err.property);
+  } else if (err instanceof SyntaxError) {
+    alert('JSON Syntax Error: ' + err.message);
+  } else {
+    throw err;
+  }
+}
+
+class MyError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
+class ValidationError extends MyError {}
+
+class PropertyRequiredError extends ValidationError {
+  constructor(property) {
+    super('No Property: ' + property);
+    this.property = property;
+  }
+}
+
+alert(new PropertyRequiredError('field').name);
+
+class Error {
+  constructor(message) {
+    this.message = message;
+  }
+}
+
+class ReadError extends Error {
+  constructor(message, cause) {
+    super(message);
+    this.cause = cause;
+    this.name = 'Error';
+  }
+}
+
+class ValidationError extends Error {}
+class PropertyRequiredError extends ValidationError() {}
+
+function validateUser(user) {
+  if (!user.age) {
+    throw new PropertyRequiredError('age');
+  }
+
+  if (!user.name) {
+    throw new PropertyRequiredError('name');
+  }
+}
+
+function readUser(json) {
+  let user;
+  try {
+    user = JSON.parse(json);
+  } catch (err) {
+    if (err instanceof SyntaxError) {
+      throw new ReadError('Syntax Error', err);
+    } else {
+      throw err;
+    }
+  }
+
+  try {
+    validateUser(user);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      throw new ReadError('Validation Error', err);
+    } else {
+      throw err;
+    }
+  }
+}
+
+try {
+  readUser('{bad json}');
+// } catch (e) {
+//   if (e instanceof ReadError) {
+//     alert(e);
+//     // Original error: SyntaxError: Unexpected token b in JSON at position 1
+//     alert("Original error: " + e.cause);
+//   } else {
+//     throw e;
+//   }
+// }
+
+class FormatError extends SyntaxError {
+  constructor(message) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
+let err = new FormatError('formatting error');
+
+console.log(err.name);
+console.log(err.stack);
+
+alert(err instanceof FormatError);
+alert(err instanceof SyntaxError);
+
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
+class PropertyRequiredError extends ValidationError {
+  constructor(property) {
+    super('No property ' + property);
+    this.name = 'PropertyRequireError';
+    this.property = property;
+  }
+}
+
+const readUser = (json) => {
+  let user = JSON.parse(json);
+
+  if (!user.age) {
+    throw new PropertyRequiredError('No field: age');
+  }
+  if (!user.name) {
+    throw new PropertyRequiredError('No filed: name');
+  }
+  return user;
+};
+
+try {
+  let user = readUser('{"age": 23}');
+} catch (err) {
+  if (err instanceof ValidationError) {
+    alert('Invalid data: ' + err.message);
+  } else if (err instanceof SyntaxError) {
+    alert('JSON Syntax Error ' + err.message);
+  } else {
+    throw err;
+  }
+}
+
+class MyError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
+class ValidationError extends MyError {}
+
+class PropertyRequiredError extends ValidationError {
+  constructor(property) {
+    super('No property ' + property);
+    this.property = property;
+  }
+}
+
+alert(new PropertyRequiredError('field').name);
+
+class ReadError extends Error {
+  constructor(message, cause) {
+    super(message);
+    this.cause = cause;
+    this.name = 'Read Error';
+  }
+}
+
+class ValidationError extends Error {}
+class PropertyRequiredError extends ValidationError {}
+
+const validateUser = (user) => {
+  if (!user.age) {
+    throw new PropertyRequiredError('age');
+  }
+  if (!user.name) {
+    throw new PropertyRequiredError('name');
+  }
+};
+
+const readUser = (json) => {
+  let user;
+  try {
+    user = JSON.parse(json);
+  } catch (err) {
+    if (err instanceof SyntaxError) {
+      throw new ReadError('Syntax Error ' + err);
+    } else {
+      throw err;
+    }
+  }
+  try {
+    validateUser(user);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      throw new ReadError('Validation Error ', err);
+    } else {
+      throw err;
+    }
+  }
+
+  try {
+    readUser('{bad json}');
+  } catch (e) {
+    if (e instanceof ReadError) {
+      alert(e);
+      alert('Original Error ' + e.cause);
+    } else {
+      throw e;
+    }
+  }
+};
+
+class FormatError extends SyntaxError {
+  constructor(message) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+
+let err = new FormatError('formatting error');
+
+alert(err.message); // formatting error
+alert(err.name); // FormatError
+alert(err.stack); // stack
+
+alert(err instanceof FormatError);
+alert(err instanceof SyntaxError);
+
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'Validation Error';
+  }
+}
+
+class PropertyRequireError extends ValidationError {
+  constructor(property) {
+    super('No Property ' + property);
+    this.name = 'PropertyRequiredError';
+    this.property = property;
+  }
+}
+
+const test = () => {
+  throw new ValidationError('Oops!');
+};
+
+const readUser = (json) => {
+  let user = JSON.parse(json);
+
+  if (!user.age) {
+    throw new PropertyRequireError('No field: age');
+  }
+  if (!user.name) {
+    throw new PropertyRequireError('No field: name');
+  }
+  return user;
+};
+
+try {
+  let user = readUser('{}');
+} catch (err) {
+  if (err instanceof ValidationError) {
+    alert('Invalid data: ' + err.message);
+    console.log(err.name);
+    console.log(err.message);
+  } else if (err instanceof SyntaxError) {
+    alert('JSON Error: ' + err.message);
+  } else {
+    throw err;
+  }
+}
+
+
+
